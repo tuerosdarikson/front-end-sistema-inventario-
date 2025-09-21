@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login Responsivo</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #6e8efb, #a777e3);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .login-container {
+      background-color: white;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+      width: 100%;
+      max-width: 440px;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-out;
+    }
+
+    .login-header {
+      background: linear-gradient(to right, #6e8efb, #a777e3);
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+    }
+
+    .login-header h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .login-header p {
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .login-form {
+      padding: 25px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-group i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a777e3;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 14px 15px 14px 45px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #6e8efb;
+      box-shadow: 0 0 0 3px rgba(110, 142, 251, 0.2);
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(to right, #6e8efb, #a777e3);
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 10px rgba(110, 142, 251, 0.4);
+    }
+
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 15px rgba(110, 142, 251, 0.5);
+    }
+
+    .btn-login:active {
+      transform: translateY(0);
+    }
+
+    .form-footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+
+    .form-footer a {
+      color: #6e8efb;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .form-footer a:hover {
+      color: #a777e3;
+      text-decoration: underline;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #777;
+    }
+
+    .input-error {
+      border-color: #ff4757;
+      box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2);
+    }
+
+    .error-message {
+      color: #ff4757;
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        border-radius: 10px;
+      }
+      
+      .login-header {
+        padding: 20px 15px;
+      }
+      
+      .login-form {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <h2>Iniciar Sesión</h2>
+      <p>Ingresa a tu cuenta para continuar</p>
+    </div>
+
+    <form class="login-form" (ngSubmit)="onLogin()" #loginForm="ngForm">
+      <div class="form-group">
+        <i class="fas fa-envelope"></i>
+        <input 
+          type="email" 
+          class="form-control" 
+          [(ngModel)]="correo" 
+          name="correo" 
+          placeholder="Correo electrónico" 
+          required
+          email
+          #emailInput="ngModel"
+          (input)="validateEmail()">
+        <div class="error-message" *ngIf="emailInput.invalid && emailInput.touched">
+          Por favor, ingresa un correo electrónico válido
+        </div>
+      </div>
+
+      <div class="form-group">
+        <i class="fas fa-lock"></i>
+        <input 
+          [type]="showPassword ? 'text' : 'password'" 
+          class="form-control" 
+          [(ngModel)]="contrasenia" 
+          name="contrasenia" 
+          placeholder="Contraseña" 
+          required
+          #passwordInput="ngModel"
+          (input)="validatePassword()">
+        <span class="password-toggle" (click)="togglePasswordVisibility()">
+          <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+        </span>
+        <div class="error-message" *ngIf="passwordInput.invalid && passwordInput.touched">
+          La contraseña es requerida
+        </div>
+      </div>
+
+      <button 
+        type="submit" 
+        class="btn-login" 
+        [disabled]="loginForm.invalid || isLoading">
+        <span *ngIf="!isLoading">Ingresar</span>
+        <span *ngIf="isLoading" class="loading"></span>
+      </button>
+
+      <div class="form-footer">
+        <a href="#">¿Olvidaste tu contraseña?</a>
+        <p>¿No tienes una cuenta? <a routerLink="/register">Regístrate</a></p>
+      </div>
+    </form>
+  </div>
+</body>
+</html>

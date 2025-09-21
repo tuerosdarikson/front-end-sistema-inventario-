@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Clientes</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: #f5f7fa;
+      padding: 20px;
+    }
+
+    .clientes-container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+
+    .header h2 {
+      font-size: 28px;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 15px;
+    }
+
+    .search-box {
+      position: relative;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #7f8c8d;
+    }
+
+    .search-box input {
+      padding: 12px 15px 12px 45px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      width: 300px;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .search-box input:focus {
+      outline: none;
+      border-color: #3498db;
+      box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    .btn-primary {
+      padding: 12px 20px;
+      background: #3498db;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: #2980b9;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+    }
+
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 16px;
+      background: white;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .filter-btn.active {
+      background: #3498db;
+      color: white;
+      border-color: #3498db;
+    }
+
+    .filter-btn:hover {
+      border-color: #3498db;
+    }
+
+    .clientes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .cliente-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s;
+    }
+
+    .cliente-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+    }
+
+    .card-header {
+      padding: 20px;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+
+    .avatar {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #3498db, #2ecc71);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+    }
+
+    .cliente-info h3 {
+      font-size: 18px;
+      color: #2c3e50;
+      margin-bottom: 4px;
+    }
+
+    .cliente-info p {
+      color: #7f8c8d;
+      font-size: 14px;
+    }
+
+    .card-body {
+      padding: 20px;
+    }
+
+    .cliente-details {
+      list-style: none;
+    }
+
+    .cliente-details li {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f1f1f1;
+    }
+
+    .cliente-details li:last-child {
+      border-bottom: none;
+    }
+
+    .detail-label {
+      color: #7f8c8d;
+      font-weight: 500;
+    }
+
+    .detail-value {
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .tipo-cliente {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .tipo-particular {
+      background: #e8f6fc;
+      color: #3498db;
+    }
+
+    .tipo-empresa {
+      background: #e7f9ed;
+      color: #2ecc71;
+    }
+
+    .tipo-vip {
+      background: #fef5e7;
+      color: #f39c12;
+    }
+
+    .card-footer {
+      padding: 15px 20px;
+      background: #f9fafb;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    .action-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .btn-edit {
+      background: #e8f6fc;
+      color: #3498db;
+    }
+
+    .btn-edit:hover {
+      background: #3498db;
+      color: white;
+    }
+
+    .btn-delete {
+      background: #feecf0;
+      color: #e74c3c;
+    }
+
+    .btn-delete:hover {
+      background: #e74c3c;
+      color: white;
+    }
+
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 50px 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    }
+
+    .empty-state i {
+      font-size: 60px;
+      color: #ddd;
+      margin-bottom: 15px;
+    }
+
+    .empty-state h3 {
+      color: #7f8c8d;
+      margin-bottom: 10px;
+      font-weight: 500;
+    }
+
+    .empty-state p {
+      color: #95a5a6;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .search-box input {
+        width: 100%;
+      }
+      
+      .clientes-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .filters {
+        flex-direction: column;
+      }
+      
+      .filter-btn {
+        width: 100%;
+        text-align: center;
+      }
+      
+      .card-header {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="clientes-container">
+    <div class="header">
+      <h2>Gestión de Clientes</h2>
+      <div class="header-actions">
+        <div class="search-box">
+          <i class="fas fa-search"></i>
+          <input 
+            type="text" 
+            placeholder="Buscar clientes..." 
+            (input)="onSearch($event)">
+        </div>
+        <button class="btn-primary">
+          <i class="fas fa-plus"></i> Nuevo Cliente
+        </button>
+      </div>
+    </div>
+
+    <div class="filters">
+      <button 
+        class="filter-btn active"
+        (click)="filterByType('')">
+        Todos
+      </button>
+      <button 
+        class="filter-btn"
+        (click)="filterByType('PARTICULAR')">
+        Particulares
+      </button>
+      <button 
+        class="filter-btn"
+        (click)="filterByType('EMPRESA')">
+        Empresas
+      </button>
+      <button 
+        class="filter-btn"
+        (click)="filterByType('VIP')">
+        VIP
+      </button>
+    </div>
+
+    <div class="clientes-grid">
+      <div *ngFor="let cliente of clientesFiltrados" class="cliente-card">
+        <div class="card-header">
+          <div class="avatar">
+            {{cliente.persona.nombre.charAt(0)}}{{cliente.persona.apellidoPaterno.charAt(0)}}
+          </div>
+          <div class="cliente-info">
+            <h3>{{cliente.persona.nombre}} {{cliente.persona.apellidoPaterno}}</h3>
+            <p>ID: {{cliente.id || 'N/A'}}</p>
+          </div>
+        </div>
+        
+        <div class="card-body">
+          <ul class="cliente-details">
+            <li *ngIf="cliente.persona.apellidoMaterno">
+              <span class="detail-label">Apellido Materno:</span>
+              <span class="detail-value">{{cliente.persona.apellidoMaterno}}</span>
+            </li>
+            <li *ngIf="cliente.persona.correo">
+              <span class="detail-label">Correo:</span>
+              <span class="detail-value">{{cliente.persona.correo}}</span>
+            </li>
+            <li *ngIf="cliente.persona.telefono">
+              <span class="detail-label">Teléfono:</span>
+              <span class="detail-value">{{cliente.persona.telefono}}</span>
+            </li>
+            <li>
+              <span class="detail-label">Tipo:</span>
+              <span class="detail-value">
+                <span class="tipo-cliente" 
+                  [class.tipo-particular]="!cliente.tipoCliente || cliente.tipoCliente === 'PARTICULAR'"
+                  [class.tipo-empresa]="cliente.tipoCliente === 'EMPRESA'"
+                  [class.tipo-vip]="cliente.tipoCliente === 'VIP'">
+                  {{cliente.tipoCliente || 'PARTICULAR'}}
+                </span>
+              </span>
+            </li>
+          </ul>
+        </div>
+        
+        <div class="card-footer">
+          <button class="action-btn btn-edit">
+            <i class="fas fa-edit"></i> Editar
+          </button>
+          <button class="action-btn btn-delete">
+            <i class="fas fa-trash"></i> Eliminar
+          </button>
+        </div>
+      </div>
+
+      <div *ngIf="clientesFiltrados.length === 0" class="empty-state">
+        <i class="fas fa-users"></i>
+        <h3>No se encontraron clientes</h3>
+        <p>Intenta ajustar los filtros o agregar nuevos clientes</p>
+        <button class="btn-primary">
+          <i class="fas fa-plus"></i> Agregar primer cliente
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Este script es solo para demostración sin Angular
+    document.addEventListener('DOMContentLoaded', function() {
+      // Datos de ejemplo para la demostración
+      const clientesEjemplo = [
+        {
+          id: 1,
+          persona: {
+            nombre: "María",
+            apellidoPaterno: "García",
+            apellidoMaterno: "López",
+            correo: "maria.garcia@email.com",
+            telefono: "+34 612 345 678"
+          },
+          tipoCliente: "PARTICULAR"
+        },
+        {
+          id: 2,
+          persona: {
+            nombre: "Juan",
+            apellidoPaterno: "Martínez",
+            apellidoMaterno: "Sánchez",
+            correo: "juan.martinez@empresa.com",
+            telefono: "+34 645 987 654"
+          },
+          tipoCliente: "EMPRESA"
+        },
+        {
+          id: 3,
+          persona: {
+            nombre: "Ana",
+            apellidoPaterno: "Rodríguez",
+            apellidoMaterno: "Fernández",
+            correo: "ana.rodriguez@email.com",
+            telefono: "+34 678 123 456"
+          },
+          tipoCliente: "VIP"
+        },
+        {
+          id: 4,
+          persona: {
+            nombre: "Carlos",
+            apellidoPaterno: "Hernández",
+            apellidoMaterno: "Díaz",
+            correo: "carlos.hernandez@email.com",
+            telefono: "+34 611 222 333"
+          }
+          // tipoCliente no definido (será PARTICULAR por defecto)
+        }
+      ];
+
+      // Renderizar clientes
+      const clientesGrid = document.querySelector('.clientes-grid');
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const searchInput = document.querySelector('.search-box input');
+      
+      let clientesFiltrados = [...clientesEjemplo];
+      let filtroTipo = '';
+      let terminoBusqueda = '';
+      
+      // Funciones de filtrado
+      function filtrarClientes() {
+        clientesFiltrados = clientesEjemplo.filter(cliente => {
+          // Filtrar por tipo
+          const tipo = cliente.tipoCliente || 'PARTICULAR';
+          const coincideTipo = !filtroTipo || tipo === filtroTipo;
+          
+          // Filtrar por búsqueda
+          const nombreCompleto = `${cliente.persona.nombre} ${cliente.persona.apellidoPaterno} ${cliente.persona.apellidoMaterno || ''}`.toLowerCase();
+          const coincideBusqueda = !terminoBusqueda || nombreCompleto.includes(terminoBusqueda.toLowerCase());
+          
+          return coincideTipo && coincideBusqueda;
+        });
+        
+        renderClientes();
+      }
+      
+      function renderClientes() {
+        // Limpiar grid
+        const cards = document.querySelectorAll('.cliente-card');
+        cards.forEach(card => card.remove());
+        
+        const emptyState = document.querySelector('.empty-state');
+        if (emptyState) emptyState.remove();
+        
+        // Agregar clientes filtrados
+        if (clientesFiltrados.length === 0) {
+          const emptyStateHTML = `
+            <div class="empty-state">
+              <i class="fas fa-users"></i>
+              <h3>No se encontraron clientes</h3>
+              <p>Intenta ajustar los filtros o agregar nuevos clientes</p>
+              <button class="btn-primary">
+                <i class="fas fa-plus"></i> Agregar primer cliente
+              </button>
+            </div>
+          `;
+          clientesGrid.innerHTML += emptyStateHTML;
+          return;
+        }
+        
+        clientesFiltrados.forEach(cliente => {
+          const tipo = cliente.tipoCliente || 'PARTICULAR';
+          let tipoClass = 'tipo-particular';
+          
+          if (tipo === 'EMPRESA') tipoClass = 'tipo-empresa';
+          if (tipo === 'VIP') tipoClass = 'tipo-vip';
+          
+          const cardHTML = `
+            <div class="cliente-card">
+              <div class="card-header">
+                <div class="avatar">
+                  ${cliente.persona.nombre.charAt(0)}${cliente.persona.apellidoPaterno.charAt(0)}
+                </div>
+                <div class="cliente-info">
+                  <h3>${cliente.persona.nombre} ${cliente.persona.apellidoPaterno}</h3>
+                  <p>ID: ${cliente.id || 'N/A'}</p>
+                </div>
+              </div>
+              
+              <div class="card-body">
+                <ul class="cliente-details">
+                  ${cliente.persona.apellidoMaterno ? `
+                    <li>
+                      <span class="detail-label">Apellido Materno:</span>
+                      <span class="detail-value">${cliente.persona.apellidoMaterno}</span>
+                    </li>
+                  ` : ''}
+                  ${cliente.persona.correo ? `
+                    <li>
+                      <span class="detail-label">Correo:</span>
+                      <span class="detail-value">${cliente.persona.correo}</span>
+                    </li>
+                  ` : ''}
+                  ${cliente.persona.telefono ? `
+                    <li>
+                      <span class="detail-label">Teléfono:</span>
+                      <span class="detail-value">${cliente.persona.telefono}</span>
+                    </li>
+                  ` : ''}
+                  <li>
+                    <span class="detail-label">Tipo:</span>
+                    <span class="detail-value">
+                      <span class="tipo-cliente ${tipoClass}">
+                        ${tipo}
+                      </span>
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              
+              <div class="card-footer">
+                <button class="action-btn btn-edit">
+                  <i class="fas fa-edit"></i> Editar
+                </button>
+                <button class="action-btn btn-delete">
+                  <i class="fas fa-trash"></i> Eliminar
+                </button>
+              </div>
+            </div>
+          `;
+          
+          clientesGrid.innerHTML += cardHTML;
+        });
+      }
+      
+      // Event listeners para filtros
+      filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          filtroTipo = this.textContent.trim();
+          if (filtroTipo === 'Todos') filtroTipo = '';
+          
+          filtrarClientes();
+        });
+      });
+      
+      // Event listener para búsqueda
+      searchInput.addEventListener('input', function() {
+        terminoBusqueda = this.value;
+        filtrarClientes();
+      });
+      
+      // Renderizar inicialmente
+      renderClientes();
+    });
+  </script>
+</body>
+</html>
