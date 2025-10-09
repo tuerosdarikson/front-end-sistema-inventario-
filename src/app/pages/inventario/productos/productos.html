@@ -1,0 +1,105 @@
+<div class="container mx-auto px-4">
+    <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+        <h2 class="text-2xl font-semibold text-gray-800">Gestión de Productos</h2>
+        <button (click)="openCreateModal()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md flex items-center gap-2">
+            <i class="fas fa-plus"></i> Nuevo Producto
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <ng-container *ngFor="let producto of productos">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300">
+                <div class="p-6">
+                    <div class="mb-4">
+                        <h5 class="text-xl font-semibold text-gray-800 mb-2">{{producto.nombre}}</h5>
+                        <p class="text-gray-500 text-sm">{{producto.codigo}}</p>
+                    </div>
+                    <div class="mb-4">
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
+                            {{producto.categoria}}
+                        </span>
+                    </div>
+                    <ul class="space-y-3 mb-6">
+                        <li class="flex items-center justify-between">
+                            <span class="text-gray-600">Stock:</span>
+                            <span class="font-medium">{{producto.stock}} unidades</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="text-gray-600">Precio:</span>
+                            <span class="font-medium">${{producto.precio}}</span>
+                        </li>
+                        <li class="flex items-center justify-between">
+                            <span class="text-gray-600">Estado:</span>
+                            <span class="px-3 py-1 rounded-full text-sm font-medium"
+                                [ngClass]="{
+                                    'bg-emerald-100 text-emerald-800': producto.stock > 10,
+                                    'bg-amber-100 text-amber-800': producto.stock <= 10 && producto.stock > 0,
+                                    'bg-red-100 text-red-800': producto.stock === 0
+                                }">
+                                <ng-container *ngIf="producto.stock > 10">En Stock</ng-container>
+                                <ng-container *ngIf="producto.stock <= 10 && producto.stock > 0">Stock Bajo</ng-container>
+                                <ng-container *ngIf="producto.stock === 0">Sin Stock</ng-container>
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="px-6 py-4 bg-gray-50 flex gap-3">
+                    <button class="flex-1 px-4 py-2 text-sm border border-blue-600 text-blue-600 rounded-lg hover:bg-blue-50 transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-edit"></i> Editar
+                    </button>
+                    <button class="flex-1 px-4 py-2 text-sm border border-red-600 text-red-600 rounded-lg hover:bg-red-50 transition-all flex items-center justify-center gap-2">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                </div>
+            </div>
+        </ng-container>
+
+        <div *ngIf="productos.length === 0" class="col-span-full py-12 text-center">
+            <i class="fas fa-box text-5xl text-gray-400 mb-4"></i>
+            <h3 class="text-2xl font-semibold text-gray-800 mb-2">No hay productos</h3>
+            <p class="text-gray-600 mb-6">Comienza agregando algunos productos a tu inventario</p>
+            <button (click)="openCreateModal()" class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all shadow-md inline-flex items-center gap-2">
+                <i class="fas fa-plus"></i> Agregar primer producto
+            </button>
+        </div>
+    </div>
+
+    <!-- Modal de creación -->
+    <div *ngIf="showCreateForm" class="fixed inset-0 flex items-center justify-center z-50">
+      <div class="absolute inset-0 bg-black opacity-40" (click)="closeCreateModal()"></div>
+      <div class="bg-white rounded-lg shadow-lg w-full max-w-md z-50 p-6">
+        <h3 class="text-xl font-semibold mb-4">Crear nuevo producto</h3>
+        <form (ngSubmit)="createProducto()">
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700">Nombre</label>
+            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Nombre del producto" [(ngModel)]="newProducto.nombre" name="nombre">
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700">Código</label>
+            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Código" [(ngModel)]="newProducto.codigo" name="codigo">
+          </div>
+          <div class="mb-3">
+            <label class="block text-sm font-medium text-gray-700">Categoría</label>
+            <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Categoría" [(ngModel)]="newProducto.categoria" name="categoria">
+          </div>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Stock</label>
+              <input type="number" class="w-full mt-1 p-2 border rounded" [(ngModel)]="newProducto.stock" name="stock">
+            </div>
+            <div class="mb-3">
+              <label class="block text-sm font-medium text-gray-700">Precio</label>
+              <input type="number" step="0.01" class="w-full mt-1 p-2 border rounded" [(ngModel)]="newProducto.precio" name="precio">
+            </div>
+          </div>
+          <div class="flex justify-end gap-2">
+            <button type="button" (click)="closeCreateModal()" [disabled]="isSubmitting" class="px-4 py-2 rounded border">Cancelar</button>
+            <button type="submit" [disabled]="isSubmitting" class="px-4 py-2 rounded bg-blue-600 text-white">
+              <span *ngIf="!isSubmitting">Guardar</span>
+              <span *ngIf="isSubmitting">Guardando...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+</div>

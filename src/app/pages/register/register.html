@@ -1,460 +1,107 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registro Responsivo</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
+<div class="register-card">
+  <div class="register-visual" aria-hidden="false">
+    <div class="visual-inner">
+      <div class="brand">Repuestos • Sistema</div>
+      <p class="register-visual-sub">Crea tu cuenta para gestionar inventario y clientes</p>
 
-    body {
-      background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
-
-    .register-container {
-      background-color: white;
-      border-radius: 15px;
-      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-      width: 100%;
-      max-width: 800px;
-      overflow: hidden;
-      animation: fadeIn 0.6s ease-out;
-    }
-
-    .register-header {
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      color: white;
-      padding: 30px 25px;
-      text-align: center;
-    }
-
-    .register-header h2 {
-      font-size: 32px;
-      font-weight: 600;
-      margin-bottom: 8px;
-    }
-
-    .register-header p {
-      font-size: 16px;
-      opacity: 0.9;
-    }
-
-    .register-form {
-      padding: 30px;
-    }
-
-    .form-row {
-      display: flex;
-      flex-wrap: wrap;
-      margin: 0 -10px;
-    }
-
-    .form-group {
-      flex: 1 0 calc(50% - 20px);
-      margin: 0 10px 20px;
-      position: relative;
-      min-width: 250px;
-    }
-
-    .form-group.full-width {
-      flex: 1 0 calc(100% - 20px);
-    }
-
-    .form-group i {
-      position: absolute;
-      left: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #2575fc;
-      font-size: 16px;
-    }
-
-    .form-control {
-      width: 100%;
-      padding: 15px 15px 15px 45px;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: all 0.3s;
-    }
-
-    .form-control:focus {
-      outline: none;
-      border-color: #2575fc;
-      box-shadow: 0 0 0 3px rgba(37, 117, 252, 0.2);
-    }
-
-    .btn-register {
-      width: 100%;
-      padding: 16px;
-      background: linear-gradient(to right, #6a11cb, #2575fc);
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-size: 18px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-      box-shadow: 0 5px 15px rgba(37, 117, 252, 0.4);
-      margin-top: 10px;
-    }
-
-    .btn-register:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(37, 117, 252, 0.5);
-    }
-
-    .btn-register:active {
-      transform: translateY(0);
-    }
-
-    .form-footer {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 15px;
-    }
-
-    .form-footer a {
-      color: #2575fc;
-      text-decoration: none;
-      transition: color 0.2s;
-      font-weight: 500;
-    }
-
-    .form-footer a:hover {
-      color: #6a11cb;
-      text-decoration: underline;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #777;
-    }
-
-    .input-error {
-      border-color: #ff4757;
-      box-shadow: 0 0 0 3px rgba(255, 71, 87, 0.2);
-    }
-
-    .error-message {
-      color: #ff4757;
-      font-size: 14px;
-      margin-top: 5px;
-      display: none;
-    }
-
-    .loading {
-      display: inline-block;
-      width: 20px;
-      height: 20px;
-      border: 3px solid rgba(255,255,255,.3);
-      border-radius: 50%;
-      border-top-color: #fff;
-      animation: spin 1s ease-in-out infinite;
-    }
-
-    .password-strength {
-      margin-top: 8px;
-      height: 5px;
-      border-radius: 3px;
-      background: #eee;
-      overflow: hidden;
-    }
-
-    .password-strength-bar {
-      height: 100%;
-      width: 0%;
-      transition: width 0.3s, background 0.3s;
-      border-radius: 3px;
-    }
-
-    .password-hint {
-      font-size: 13px;
-      color: #777;
-      margin-top: 5px;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(-20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-
-    @media (max-width: 768px) {
-      .form-group {
-        flex: 1 0 calc(100% - 20px);
-      }
-      
-      .register-header {
-        padding: 25px 20px;
-      }
-      
-      .register-form {
-        padding: 25px 20px;
-      }
-    }
-
-    @media (max-width: 480px) {
-      .register-container {
-        border-radius: 12px;
-      }
-      
-      .register-header h2 {
-        font-size: 28px;
-      }
-      
-      .form-control {
-        padding: 14px 14px 14px 40px;
-      }
-    }
-  </style>
-</head>
-<body>
-  <div class="register-container">
-    <div class="register-header">
-      <h2>Crear Cuenta</h2>
-      <p>Completa tus datos para registrarte</p>
+      <div class="visual-illustration" aria-hidden="true">
+        <!-- Simple SVG ilustrativo que no depende de assets externos -->
+        <svg width="220" height="160" viewBox="0 0 220 160" fill="none" xmlns="http://www.w3.org/2000/svg" role="img">
+          <rect x="0" y="0" width="220" height="160" rx="12" fill="rgba(255,255,255,0.06)" />
+          <g transform="translate(28,22)" fill="none" stroke="rgba(255,255,255,0.96)" stroke-width="2">
+            <rect x="2" y="2" width="120" height="80" rx="8" stroke-opacity="0.14" fill="rgba(255,255,255,0.03)"/>
+            <path d="M10 30h100" stroke-opacity="0.18"/>
+            <circle cx="30" cy="24" r="4" fill="white" opacity="0.95" />
+            <g transform="translate(74,8)">
+              <path d="M6 10v18" stroke-linecap="round" stroke-opacity="0.9"/>
+              <path d="M0 24h26" stroke-linecap="round" stroke-opacity="0.9"/>
+            </g>
+          </g>
+          <g transform="translate(28,110)" fill="none" stroke="rgba(255,255,255,0.95)" stroke-width="2">
+            <rect x="0" y="0" width="30" height="30" rx="6" stroke-opacity="0.12"/>
+            <rect x="44" y="0" width="30" height="30" rx="6" stroke-opacity="0.12"/>
+            <rect x="88" y="0" width="30" height="30" rx="6" stroke-opacity="0.12"/>
+          </g>
+        </svg>
+      </div>
     </div>
-
-    <form class="register-form" (ngSubmit)="onRegister()" #registerForm="ngForm">
-      <div class="form-row">
-        <div class="form-group">
-          <i class="fas fa-user"></i>
-          <input 
-            type="text" 
-            class="form-control" 
-            [(ngModel)]="persona.nombre" 
-            name="nombre" 
-            placeholder="Nombre" 
-            required
-            #nombreInput="ngModel"
-            (input)="validateField(nombreInput, 'nombre')">
-          <div class="error-message" *ngIf="nombreInput.invalid && nombreInput.touched">
-            El nombre es requerido
-          </div>
-        </div>
-
-        <div class="form-group">
-          <i class="fas fa-users"></i>
-          <input 
-            type="text" 
-            class="form-control" 
-            [(ngModel)]="persona.apellidoPaterno" 
-            name="apellidoPaterno" 
-            placeholder="Apellido Paterno" 
-            required
-            #apellidoPInput="ngModel"
-            (input)="validateField(apellidoPInput, 'apellidoPaterno')">
-          <div class="error-message" *ngIf="apellidoPInput.invalid && apellidoPInput.touched">
-            El apellido paterno es requerido
-          </div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group">
-          <i class="fas fa-users"></i>
-          <input 
-            type="text" 
-            class="form-control" 
-            [(ngModel)]="persona.apellidoMaterno" 
-            name="apellidoMaterno" 
-            placeholder="Apellido Materno" 
-            required
-            #apellidoMInput="ngModel"
-            (input)="validateField(apellidoMInput, 'apellidoMaterno')">
-          <div class="error-message" *ngIf="apellidoMInput.invalid && apellidoMInput.touched">
-            El apellido materno es requerido
-          </div>
-        </div>
-
-        <div class="form-group">
-          <i class="fas fa-phone"></i>
-          <input 
-            type="text" 
-            class="form-control" 
-            [(ngModel)]="persona.telefono" 
-            name="telefono" 
-            placeholder="Teléfono"
-            #telefonoInput="ngModel"
-            (input)="validatePhone(telefonoInput)">
-          <div class="error-message" *ngIf="telefonoInput.invalid && telefonoInput.touched">
-            Ingresa un número de teléfono válido
-          </div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group full-width">
-          <i class="fas fa-envelope"></i>
-          <input 
-            type="email" 
-            class="form-control" 
-            [(ngModel)]="persona.correo" 
-            name="correo" 
-            placeholder="Correo electrónico" 
-            required
-            email
-            #correoInput="ngModel"
-            (input)="validateEmail(correoInput)">
-          <div class="error-message" *ngIf="correoInput.invalid && correoInput.touched">
-            Por favor, ingresa un correo electrónico válido
-          </div>
-        </div>
-      </div>
-
-      <div class="form-row">
-        <div class="form-group full-width">
-          <i class="fas fa-lock"></i>
-          <input 
-            [type]="showPassword ? 'text' : 'password'" 
-            class="form-control" 
-            [(ngModel)]="contrasenia" 
-            name="contrasenia" 
-            placeholder="Contraseña" 
-            required
-            minlength="6"
-            #passwordInput="ngModel"
-            (input)="validatePassword(passwordInput); updatePasswordStrength()">
-          <span class="password-toggle" (click)="togglePasswordVisibility()">
-            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
-          </span>
-          <div class="password-strength">
-            <div class="password-strength-bar" [style.width]="passwordStrength + '%'" [style.background]="getPasswordStrengthColor()"></div>
-          </div>
-          <div class="password-hint" *ngIf="passwordInput.value && passwordInput.value.length > 0">
-            La contraseña debe tener al menos 6 caracteres
-          </div>
-          <div class="error-message" *ngIf="passwordInput.invalid && passwordInput.touched">
-            La contraseña es requerida y debe tener al menos 6 caracteres
-          </div>
-        </div>
-      </div>
-
-      <button 
-        type="submit" 
-        class="btn-register" 
-        [disabled]="registerForm.invalid || isLoading">
-        <span *ngIf="!isLoading">Crear Cuenta</span>
-        <span *ngIf="isLoading" class="loading"></span>
-      </button>
-
-      <div class="form-footer">
-        <p>¿Ya tienes una cuenta? <a href="#">Inicia Sesión</a></p>
-      </div>
-    </form>
   </div>
 
-  <script>
-    // Este script es solo para demostración sin Angular
-    document.addEventListener('DOMContentLoaded', function() {
-      const form = document.querySelector('.register-form');
-      const inputs = form.querySelectorAll('.form-control');
-      const toggleButton = form.querySelector('.password-toggle');
-      const passwordInput = form.querySelector('input[name="contrasenia"]');
-      const passwordStrengthBar = form.querySelector('.password-strength-bar');
-      
-      // Alternar visibilidad de contraseña
-      if (toggleButton) {
-        toggleButton.addEventListener('click', function() {
-          const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
-          passwordInput.setAttribute('type', type);
-          this.querySelector('i').classList.toggle('fa-eye');
-          this.querySelector('i').classList.toggle('fa-eye-slash');
-        });
-      }
-      
-      // Actualizar fuerza de la contraseña
-      if (passwordInput) {
-        passwordInput.addEventListener('input', function() {
-          const value = this.value;
-          let strength = 0;
-          
-          if (value.length > 0) strength += 20;
-          if (value.length >= 6) strength += 20;
-          if (/[A-Z]/.test(value)) strength += 20;
-          if (/[0-9]/.test(value)) strength += 20;
-          if (/[^A-Za-z0-9]/.test(value)) strength += 20;
-          
-          passwordStrengthBar.style.width = strength + '%';
-          
-          // Cambiar color según la fuerza
-          if (strength < 40) {
-            passwordStrengthBar.style.background = '#ff4757';
-          } else if (strength < 80) {
-            passwordStrengthBar.style.background = '#ffa502';
-          } else {
-            passwordStrengthBar.style.background = '#2ed573';
-          }
-        });
-      }
-      
-      // Validación básica para demostración
-      form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        let isValid = true;
-        
-        // Validar todos los campos
-        inputs.forEach(input => {
-          if (input.hasAttribute('required') && !input.value) {
-            input.classList.add('input-error');
-            isValid = false;
-          }
-          
-          // Validar email específicamente
-          if (input.type === 'email' && input.value && !isValidEmail(input.value)) {
-            input.classList.add('input-error');
-            isValid = false;
-          }
-        });
-        
-        if (isValid) {
-          // Simular envío del formulario
-          const submitBtn = form.querySelector('button[type="submit"]');
-          const originalText = submitBtn.innerHTML;
-          submitBtn.innerHTML = '<span class="loading"></span>';
-          submitBtn.disabled = true;
-          
-          setTimeout(function() {
-            alert('¡Registro exitoso!\nRedirigiendo...');
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-          }, 1500);
-        }
-      });
-      
-      // Remover estilos de error al escribir
-      inputs.forEach(input => {
-        input.addEventListener('input', function() {
-          this.classList.remove('input-error');
-        });
-      });
-      
-      // Función auxiliar para validar email
-      function isValidEmail(email) {
-        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        return re.test(email);
-      }
-    });
-  </script>
-</body>
-</html>
+  <div class="register-body">
+    <div class="register-header">
+      <h2 class="register-title">Crear Cuenta</h2>
+      <p class="register-subtitle">Completa tus datos para registrarte</p>
+    </div>
+
+    <form class="form" (ngSubmit)="onRegister()" #registerForm="ngForm">
+
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem;">
+        <div class="form-group">
+          <label for="nombre">Nombre</label>
+          <input id="nombre" type="text" name="nombre" class="form-control" [(ngModel)]="persona.nombre" placeholder="Nombre" required #nombreInput="ngModel">
+          <div class="error" *ngIf="nombreInput.invalid && nombreInput.touched">El nombre es requerido</div>
+        </div>
+
+        <div class="form-group">
+          <label for="apellidoP">Apellido Paterno</label>
+          <input id="apellidoP" type="text" name="apellidoPaterno" class="form-control" [(ngModel)]="persona.apellidoPaterno" placeholder="Apellido Paterno" required #apellidoPInput="ngModel">
+          <div class="error" *ngIf="apellidoPInput.invalid && apellidoPInput.touched">El apellido paterno es requerido</div>
+        </div>
+      </div>
+
+      <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; margin-top:0.75rem;">
+        <div class="form-group">
+          <label for="apellidoM">Apellido Materno</label>
+          <input id="apellidoM" type="text" name="apellidoMaterno" class="form-control" [(ngModel)]="persona.apellidoMaterno" placeholder="Apellido Materno" required #apellidoMInput="ngModel">
+          <div class="error" *ngIf="apellidoMInput.invalid && apellidoMInput.touched">El apellido materno es requerido</div>
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input id="telefono" type="text" name="telefono" class="form-control" [(ngModel)]="persona.telefono" placeholder="Teléfono" #telefonoInput="ngModel">
+          <div class="error" *ngIf="telefonoInput.invalid && telefonoInput.touched">Ingresa un número de teléfono válido</div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:0.75rem;">
+        <div class="form-group">
+          <label for="correo">Correo electrónico</label>
+          <input id="correo" type="email" name="correo" class="form-control" [(ngModel)]="persona.correo" placeholder="Correo electrónico" required email #correoInput="ngModel">
+          <div class="error" *ngIf="correoInput.invalid && correoInput.touched">Por favor, ingresa un correo electrónico válido</div>
+        </div>
+      </div>
+
+      <div class="form-row" style="margin-top:0.75rem;">
+        <div class="form-group" style="position: relative;">
+          <label for="contrasenia">Contraseña</label>
+          <input id="contrasenia" [type]="showPassword ? 'text' : 'password'" name="contrasenia" class="form-control" [(ngModel)]="contrasenia" placeholder="Contraseña" required minlength="6" #passwordInput="ngModel" (input)="updatePasswordStrength()">
+
+          <button type="button" class="btn-ghost" (click)="togglePasswordVisibility()" aria-label="Mostrar/Ocultar contraseña" style="position: absolute; right: 8px; top: 36px; padding: 0.35rem 0.55rem;">
+            <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+          </button>
+
+          <div class="password-strength" style="margin-top:0.6rem; height:8px; background: rgba(17,24,39,0.04); border-radius:6px; overflow:hidden;">
+            <div class="password-strength-bar" [style.width]="passwordStrength + '%'" [style.background]="getPasswordStrengthColor()" style="height:100%; transition: width 160ms ease;"></div>
+          </div>
+
+          <div class="error" *ngIf="passwordInput.invalid && passwordInput.touched">La contraseña es requerida y debe tener al menos 6 caracteres</div>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:1rem;">
+        <div></div>
+        <a class="forgot" routerLink="/login">¿Ya tienes una cuenta? Inicia Sesión</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="registerForm.invalid || isLoading" style="margin-top:1rem; width:100%;">
+        <span *ngIf="!isLoading">Crear Cuenta</span>
+        <span *ngIf="isLoading" class="loading">Cargando...</span>
+      </button>
+
+      <hr class="divider">
+
+      <p class="footer-note">Al crear una cuenta, aceptas nuestros términos y condiciones.</p>
+
+    </form>
+  </div>
+</div>

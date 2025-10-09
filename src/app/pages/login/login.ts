@@ -14,6 +14,9 @@ export class LoginComponent {
   correo = '';
   contrasenia = '';
 
+  // recordar sesión
+  remember = false;
+
   // 👇 nuevas propiedades
   showPassword = false;
   isLoading = false;

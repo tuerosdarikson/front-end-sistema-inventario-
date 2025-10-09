@@ -1,0 +1,57 @@
+<div class="p-6">
+    <!-- Navegación superior -->
+    <nav class="bg-white shadow-md rounded-lg mb-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <span class="text-xl font-semibold text-gray-800">Inventario</span>
+                
+                <!-- Móvil menu button -->
+                <div class="sm:hidden">
+                    <button class="text-gray-500 hover:text-gray-600" type="button">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                </div>
+
+                <!-- Desktop menu -->
+                <div class="hidden sm:flex sm:space-x-8">
+                    <a routerLink="productos" routerLinkActive="text-blue-600 border-b-2 border-blue-600" 
+                       [routerLinkActiveOptions]="{exact: false}"
+                       class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-box mr-2"></i> Productos
+                    </a>
+                    <a routerLink="categorias" routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+                       [routerLinkActiveOptions]="{exact: false}"
+                       class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-tags mr-2"></i> Categorías
+                    </a>
+                    <a routerLink="movimientos" routerLinkActive="text-blue-600 border-b-2 border-blue-600"
+                       [routerLinkActiveOptions]="{exact: false}"
+                       class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-700 hover:text-blue-600 transition-colors">
+                        <i class="fas fa-exchange-alt mr-2"></i> Movimientos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Mobile menu -->
+            <div class="sm:hidden">
+                <div class="pt-2 pb-3 space-y-1">
+                    <a routerLink="productos" routerLinkActive="bg-blue-50 text-blue-600"
+                       class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-box mr-2"></i> Productos
+                    </a>
+                    <a routerLink="categorias" routerLinkActive="bg-blue-50 text-blue-600"
+                       class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-tags mr-2"></i> Categorías
+                    </a>
+                    <a routerLink="movimientos" routerLinkActive="bg-blue-50 text-blue-600"
+                       class="block pl-3 pr-4 py-2 text-base font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                        <i class="fas fa-exchange-alt mr-2"></i> Movimientos
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Contenido dinámico -->
+    <router-outlet></router-outlet>
+</div>

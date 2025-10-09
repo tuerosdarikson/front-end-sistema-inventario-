@@ -1,0 +1,40 @@
+<div [class.w-64]="!collapsed" [class.w-20]="collapsed" class="h-screen bg-gray-900 text-white flex flex-col shadow-lg transition-all">
+  <div class="p-3 flex items-center justify-between">
+    <a href="/" class="flex items-center space-x-3">
+      <span *ngIf="!collapsed" class="text-xl font-semibold bg-gradient-to-r from-yellow-500 to-amber-400 bg-clip-text text-transparent">Administración</span>
+      <span *ngIf="collapsed" class="text-lg font-semibold text-yellow-400">AD</span>
+    </a>
+    <button (click)="toggle()" aria-label="Toggle sidebar" class="text-gray-300 hover:text-white p-1 rounded-md focus:outline-none">
+      <i [class]="collapsed ? 'fas fa-chevron-right' : 'fas fa-chevron-left'"></i>
+    </button>
+  </div>
+  
+  <div class="flex-1 px-2">
+    <div class="py-4">
+      <div class="h-[2px] bg-gradient-to-r from-yellow-500 to-amber-400"></div>
+    </div>
+    
+    <nav class="space-y-2">
+      <a routerLink="/cliente" class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-all hover:bg-gray-800 hover:border-l-4 hover:border-yellow-500 group ">
+        <i class="fa-solid fa-users text-lg text-yellow-500 group-hover:text-amber-400 w-6 text-center"></i>
+        <span *ngIf="!collapsed" class="font-medium text-gray-300 group-hover:text-amber-400">Clientes</span>
+      </a>
+
+      <a routerLink="/inventario" class="flex items-center space-x-3 px-3 py-3 rounded-lg transition-all hover:bg-gray-800 hover:border-l-4 hover:border-yellow-500 group ">
+        <i class="fa-solid fa-box text-lg text-yellow-500 group-hover:text-amber-400 w-6 text-center"></i>
+        <span *ngIf="!collapsed" class="font-medium text-gray-300 group-hover:text-amber-400">Inventario</span>
+      </a>
+
+      
+    </nav>
+  </div>
+  
+  <div class="p-4">
+    <div class="py-4">
+      <div class="h-[2px] bg-gradient-to-r from-yellow-500 to-amber-400"></div>
+    </div>
+    <div class="text-center text-sm text-amber-500/70">
+      © 2025 Sistema Clientes
+    </div>
+  </div>
+</div>
