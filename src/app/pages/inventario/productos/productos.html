@@ -6,12 +6,14 @@
     <div class="flex flex-wrap gap-2">
       <input
         [(ngModel)]="filtroTexto"
+        (keyup.enter)="aplicarFiltros()"
         placeholder="Buscar por nombre o código..."
         class="px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
       />
 
       <select
         [(ngModel)]="filtroCategoria"
+        (change)="aplicarFiltros()"
         class="px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
       >
         <option value="">Todas las categorías</option>
@@ -22,11 +24,20 @@
 
       <select
         [(ngModel)]="filtroMarca"
+        (change)="aplicarFiltros()"
         class="px-3 py-2 border rounded-md shadow-sm focus:ring-2 focus:ring-blue-400 focus:outline-none"
       >
         <option value="">Todas las marcas</option>
         <option *ngFor="let marca of marcas" [value]="marca.id">{{ marca.nombre }}</option>
       </select>
+
+      <button
+        (click)="limpiarFiltros()"
+        class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-all shadow-md flex items-center gap-2"
+        *ngIf="filtroTexto || filtroCategoria || filtroMarca"
+      >
+        <i class="fas fa-times"></i> Limpiar
+      </button>
 
       <button
         (click)="abrirFormulario()"

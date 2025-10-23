@@ -44,7 +44,7 @@ export class ProductosComponent implements OnInit {
 
   // Paginación
   page = 0;
-  size = 10;
+  size = 12;
   totalPages = 0;
   totalElements = 0;
 
@@ -156,27 +156,98 @@ export class ProductosComponent implements OnInit {
     });
   }
 
-  /** Filtro local */
+  /** Filtro local mejorado */
   filtrarProductos() {
     const texto = this.filtroTexto.toLowerCase();
     return this.productos.filter((p) => {
-      const coincideTexto =
-        p.nombre.toLowerCase().includes(texto) || p.codigo.toLowerCase().includes(texto);
-      const coincideCategoria = this.filtroCategoria
-        ? p.categoria_id?.toString() === this.filtroCategoria
-        : true;
-      const coincideMarca = this.filtroMarca
-        ? p.marca_id?.toString() === this.filtroMarca
-        : true;
+      // Filtro por texto (nombre o código)
+      const coincideTexto = !texto || 
+        p.nombre.toLowerCase().includes(texto) || 
+        p.codigo.toLowerCase().includes(texto);
+      
+      // Filtro por categoría - verifica tanto categoria_id como categoria.id
+      const coincideCategoria = !this.filtroCategoria || 
+        (p.categoria_id?.toString() === this.filtroCategoria) ||
+        (p.categoria?.id?.toString() === this.filtroCategoria);
+      
+      // Filtro por marca - verifica tanto marca_id como marca.id
+      const coincideMarca = !this.filtroMarca || 
+        (p.marca_id?.toString() === this.filtroMarca) ||
+        (p.marca?.id?.toString() === this.filtroMarca);
+      
       return coincideTexto && coincideCategoria && coincideMarca;
     });
+  }
+
+  /** Aplicar filtros (llama al backend si hay filtros activos) */
+  aplicarFiltros() {
+    // Si hay filtros de categoría o marca, usar el endpoint de filtrado del backend
+    if (this.filtroCategoria || this.filtroMarca || this.filtroTexto) {
+      this.filtrarConBackend();
+    } else {
+      this.loadAll();
+    }
+  }
+
+  /** Filtrar productos usando el endpoint del backend */
+  filtrarConBackend() {
+    const filtro: any = {};
+    
+    if (this.filtroTexto) {
+      filtro.nombre = this.filtroTexto;
+    }
+    if (this.filtroCategoria) {
+      filtro.categoria_id = parseInt(this.filtroCategoria);
+    }
+    if (this.filtroMarca) {
+      filtro.marca_id = parseInt(this.filtroMarca);
+    }
+
+    console.log('🔍 Aplicando filtros:', filtro);
+
+    this.productoService.filtrarProductos(filtro, this.page, this.size).subscribe({
+      next: (res: any) => {
+        console.log('✅ Resultados del filtro:', res);
+        if (res.content) {
+          this.productos = res.content;
+          this.totalPages = res.totalPages;
+          this.totalElements = res.totalElements;
+        } else if (Array.isArray(res)) {
+          this.productos = res;
+          this.totalPages = 1;
+          this.totalElements = res.length;
+        } else {
+          this.productos = [];
+        }
+        console.log(`📦 Productos filtrados: ${this.productos.length}`);
+      },
+      error: (err) => {
+        console.error('❌ Error al filtrar productos:', err);
+        // Si falla el filtrado del backend, cargar todos
+        this.loadAll();
+      }
+    });
+  }
+
+  /** Limpiar todos los filtros */
+  limpiarFiltros() {
+    this.filtroTexto = '';
+    this.filtroCategoria = '';
+    this.filtroMarca = '';
+    this.page = 0;
+    this.loadAll();
   }
 
   /** Cambiar página */
   cambiarPagina(nuevaPagina: number) {
     if (nuevaPagina < 0 || nuevaPagina >= this.totalPages) return;
     this.page = nuevaPagina;
-    this.loadAll();
+    // Mantener los filtros activos al cambiar de página
+    if (this.filtroCategoria || this.filtroMarca || this.filtroTexto) {
+      this.aplicarFiltros();
+    } else {
+      this.loadAll();
+    }
   }
 
   /** Formulario de categoría */

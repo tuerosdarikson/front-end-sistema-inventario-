@@ -14,11 +14,11 @@ export class ProductoService {
   constructor(private http: HttpClient) {}
 
   /**  Listar productos con paginación */
-  listarProductos(page: number = 0, size: number = 10): Observable<Producto[]> {
+  listarProductos(page: number = 0, size: number = 10): Observable<any> {
     const params = new HttpParams()
       .set('page', page)
       .set('size', size);
-    return this.http.get<Producto[]>(this.baseUrl, { params })
+    return this.http.get<any>(this.baseUrl, { params })
       .pipe(catchError(this.handleError));
   }
 
