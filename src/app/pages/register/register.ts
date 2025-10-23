@@ -13,8 +13,8 @@ import { AuthService } from '../../services/auth';
 export class RegisterComponent {
   persona = {
     nombre: '',
-    apellidoPaterno: '',
-    apellidoMaterno: '',
+    apellido_paterno: '',
+    apellido_materno: '',
     correo: '',
     telefono: ''
   };
@@ -27,8 +27,8 @@ export class RegisterComponent {
 
   fieldErrors: Record<string, boolean> = {
     nombre: false,
-    apellidoPaterno: false,
-    apellidoMaterno: false,
+    apellido_paterno: false,
+    apellido_materno: false,
     correo: false,
     telefono: false,
     contrasenia: false

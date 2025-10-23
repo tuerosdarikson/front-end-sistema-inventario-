@@ -1,5 +1,8 @@
+import { Marca } from "./marca";
+import { Categoria } from "./categoria";
+
 export interface Producto {
-    producto_id: number;
+    id: number;
     nombre: string;
     descripcion: string;
     precio_venta: number;
@@ -8,20 +11,19 @@ export interface Producto {
     stock_minimo: number;
     codigo: string;
     imagen_url?: string;
-    marca_id: number;
-    marca: Marca;
-    categoria_id: number;
-    categoria: Categoria;
+    marca_id?: number;
+    categoria_id?: number;
     creado_en: Date;
     actualizado_en: Date;
+    marca?: Marca;
+    categoria?: Categoria;
 }
 
-export interface Categoria {
-    categoria_id: number;
+export interface ProductoSimple {
+    id: number;
     nombre: string;
+    stock?: number; 
 }
 
-export interface Marca {
-    marca_id: number;
-    nombre: string;
-}
+
+

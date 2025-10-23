@@ -14,13 +14,7 @@ export interface Rol {
     es_admin: boolean;
 }
 
-export interface Persona {
+export interface usuariosimple{
     id: number;
     nombre: string;
-    apellido_paterno: string;
-    apellido_materno: string;
-    correo: string;
-    telefono: string;
-    creado_en: Date;
-    actualizado_en: Date;
 }

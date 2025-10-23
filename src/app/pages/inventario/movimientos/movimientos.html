@@ -2,10 +2,10 @@
     <div class="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h2 class="text-2xl font-semibold text-gray-800">Movimientos de Stock</h2>
         <div class="flex gap-3">
-            <button (click)="openCreateModal('entrada')" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all shadow-md flex items-center gap-2">
+            <button (click)="openCreateModal(TipoMovimiento.ENTRADA)" class="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all shadow-md flex items-center gap-2">
                 <i class="fas fa-plus"></i> Entrada
             </button>
-            <button (click)="openCreateModal('salida')" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all shadow-md flex items-center gap-2">
+            <button (click)="openCreateModal(TipoMovimiento.SALIDA)" class="px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-all shadow-md flex items-center gap-2">
                 <i class="fas fa-minus"></i> Salida
             </button>
         </div>
@@ -18,8 +18,10 @@
                 <label class="block text-sm font-medium text-gray-700 mb-2">Tipo de movimiento</label>
                 <select [(ngModel)]="filtroTipo" (change)="aplicarFiltros()" class="w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500" name="filtroTipo">
                     <option value="">Todos</option>
-                    <option value="entrada">Entrada</option>
-                    <option value="salida">Salida</option>
+                    <option [value]="TipoMovimiento.ENTRADA">Entrada</option>
+                    <option [value]="TipoMovimiento.SALIDA">Salida</option>
+                    <option [value]="TipoMovimiento.DEVOLUCION_CLIENTE">Devolución Cliente</option>
+                    <option [value]="TipoMovimiento.DEVOLUCION_PROVEEDOR">Devolución Proveedor</option>
                 </select>
             </div>
             <div>
@@ -55,20 +57,20 @@
                 <tbody class="bg-white divide-y divide-gray-200">
                     <ng-container *ngFor="let movimiento of movimientosFiltrados">
                         <tr class="hover:bg-gray-50">
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.fecha}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.fecha | date:'dd/MM/yyyy HH:mm'}}</td>
                             <td class="px-6 py-4 whitespace-nowrap">
                                 <span class="px-3 py-1 rounded-full text-sm font-medium" 
                                     [ngClass]="{
-                                        'bg-emerald-100 text-emerald-800': movimiento.tipo === 'entrada',
-                                        'bg-amber-100 text-amber-800': movimiento.tipo === 'salida'
+                                        'bg-emerald-100 text-emerald-800': movimiento.tipo_movimiento === TipoMovimiento.ENTRADA || movimiento.tipo_movimiento === TipoMovimiento.DEVOLUCION_CLIENTE,
+                                        'bg-amber-100 text-amber-800': movimiento.tipo_movimiento === TipoMovimiento.SALIDA || movimiento.tipo_movimiento === TipoMovimiento.DEVOLUCION_PROVEEDOR
                                     }">
-                                    {{movimiento.tipo}}
+                                    {{movimiento.tipo_movimiento}}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.producto}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.producto?.nombre || 'N/A'}}</td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.cantidad}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.usuario}}</td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{movimiento.notas}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{movimiento.usuario?.nombre || 'N/A'}}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{{movimiento.referencia || '-'}}</td>
                         </tr>
                     </ng-container>
                     <tr *ngIf="movimientos.length === 0">
@@ -111,41 +113,101 @@
             <div class="absolute inset-0 bg-black opacity-40" (click)="closeCreateModal()"></div>
             <div class="bg-white rounded-lg shadow-lg w-full max-w-lg z-50 p-6">
                 <h3 class="text-xl font-semibold mb-4">Registrar movimiento</h3>
-                <form (ngSubmit)="createMovimiento()">
+                <form [formGroup]="form" (ngSubmit)="createMovimiento()">
                     <div class="grid grid-cols-2 gap-3">
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700">Fecha</label>
-                            <input type="date" class="w-full mt-1 p-2 border rounded" [(ngModel)]="newMovimiento.fecha" name="fecha">
+                            <input type="date" class="w-full mt-1 p-2 border rounded" formControlName="fecha">
                         </div>
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700">Tipo</label>
-                            <select class="w-full mt-1 p-2 border rounded" [(ngModel)]="newMovimiento.tipo" name="tipo">
-                                <option value="entrada">Entrada</option>
-                                <option value="salida">Salida</option>
+                            <select class="w-full mt-1 p-2 border rounded" formControlName="tipo_movimiento">
+                                <option [value]="TipoMovimiento.ENTRADA">Entrada</option>
+                                <option [value]="TipoMovimiento.SALIDA">Salida</option>
+                                <option [value]="TipoMovimiento.DEVOLUCION_CLIENTE">Devolución Cliente</option>
+                                <option [value]="TipoMovimiento.DEVOLUCION_PROVEEDOR">Devolución Proveedor</option>
                             </select>
                         </div>
                     </div>
                     <div class="mb-3">
                         <label class="block text-sm font-medium text-gray-700">Producto</label>
-                        <input type="text" class="w-full mt-1 p-2 border rounded" placeholder="Producto" [(ngModel)]="newMovimiento.producto" name="producto">
+                        <select class="w-full mt-1 p-2 border rounded" formControlName="producto" 
+                                [class.border-red-500]="form.get('producto')?.invalid && form.get('producto')?.touched"
+                                [disabled]="productos.length === 0">
+                            <option value="">
+                                {{ productos.length === 0 ? 'No hay productos disponibles' : 'Seleccione un producto (' + productos.length + ' disponibles)' }}
+                            </option>
+                            <option *ngFor="let producto of productos" [ngValue]="producto">
+                                {{producto.nombre}} - Stock: {{producto.stock || 0}} unidades (ID: {{producto.id}})
+                            </option>
+                        </select>
+                        <div *ngIf="productos.length === 0" class="text-sm text-red-600 mt-1">
+                            ⚠️ No se pudieron cargar los productos. Verifique que existan productos registrados en el sistema.
+                        </div>
+                        <div *ngIf="form.get('producto')?.invalid && form.get('producto')?.touched" 
+                             class="text-red-500 text-sm mt-1">
+                            Debe seleccionar un producto
+                        </div>
+                        <div *ngIf="form.get('producto')?.value" class="text-sm mt-1">
+                            <div class="text-gray-600 mb-1">
+                                <strong>Stock actual:</strong> {{getSelectedProductStock()}} unidades
+                            </div>
+                            <div *ngIf="form.get('tipo_movimiento')?.value && form.get('cantidad')?.value" 
+                                 class="p-3 rounded-lg border"
+                                 [ngClass]="{
+                                    'bg-green-50 border-green-200': isStockSufficient(),
+                                    'bg-red-50 border-red-200': !isStockSufficient()
+                                 }">
+                                <div class="text-sm font-medium mb-2">
+                                    <span *ngIf="form.get('tipo_movimiento')?.value === TipoMovimiento.ENTRADA || form.get('tipo_movimiento')?.value === TipoMovimiento.DEVOLUCION_CLIENTE" class="text-green-700">
+                                        📈 +{{form.get('cantidad')?.value || 0}} unidades (Ingreso)
+                                    </span>
+                                    <span *ngIf="form.get('tipo_movimiento')?.value === TipoMovimiento.SALIDA || form.get('tipo_movimiento')?.value === TipoMovimiento.DEVOLUCION_PROVEEDOR" class="text-amber-700">
+                                        📉 -{{form.get('cantidad')?.value || 0}} unidades (Salida)
+                                    </span>
+                                </div>
+                                <div class="text-sm">
+                                    <div class="flex justify-between items-center">
+                                        <span>Stock actual:</span>
+                                        <span class="font-medium">{{getSelectedProductStock()}}</span>
+                                    </div>
+                                    <div class="flex justify-between items-center font-bold" 
+                                         [ngClass]="{
+                                            'text-green-700': isStockSufficient(),
+                                            'text-red-700': !isStockSufficient()
+                                         }">
+                                        <span>Stock final:</span>
+                                        <span>
+                                            {{getResultingStock()}}
+                                            <span *ngIf="isStockSufficient()" class="ml-1">✅</span>
+                                            <span *ngIf="!isStockSufficient()" class="ml-1">❌</span>
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid grid-cols-2 gap-3">
+                    <div class="grid grid-cols-1 gap-3">
                         <div class="mb-3">
                             <label class="block text-sm font-medium text-gray-700">Cantidad</label>
-                            <input type="number" class="w-full mt-1 p-2 border rounded" [(ngModel)]="newMovimiento.cantidad" name="cantidad">
-                        </div>
-                        <div class="mb-3">
-                            <label class="block text-sm font-medium text-gray-700">Usuario</label>
-                            <input type="text" class="w-full mt-1 p-2 border rounded" [(ngModel)]="newMovimiento.usuario" name="usuario">
+                            <input type="number" min="1" class="w-full mt-1 p-2 border rounded" 
+                                   formControlName="cantidad"
+                                   [class.border-red-500]="!isStockSufficient() && form.get('cantidad')?.value > 0">
+                            <div *ngIf="form.get('cantidad')?.invalid && form.get('cantidad')?.touched" 
+                                 class="text-red-500 text-sm mt-1">
+                                La cantidad debe ser mayor a 0
+                            </div>
                         </div>
                     </div>
                     <div class="mb-3">
-                        <label class="block text-sm font-medium text-gray-700">Notas</label>
-                        <textarea class="w-full mt-1 p-2 border rounded" [(ngModel)]="newMovimiento.notas" name="notas"></textarea>
+                        <label class="block text-sm font-medium text-gray-700">Referencia/Notas</label>
+                        <textarea class="w-full mt-1 p-2 border rounded" formControlName="referencia"></textarea>
                     </div>
                     <div class="flex justify-end gap-2">
                         <button type="button" (click)="closeCreateModal()" [disabled]="isSubmitting" class="px-4 py-2 rounded border">Cancelar</button>
-                        <button type="submit" [disabled]="isSubmitting" class="px-4 py-2 rounded bg-blue-600 text-white">
+                        <button type="submit" 
+                                [disabled]="isSubmitting || !canSubmit()" 
+                                class="px-4 py-2 rounded bg-blue-600 text-white disabled:bg-gray-400 transition-colors">
                             <span *ngIf="!isSubmitting">Guardar</span>
                             <span *ngIf="isSubmitting">Guardando...</span>
                         </button>

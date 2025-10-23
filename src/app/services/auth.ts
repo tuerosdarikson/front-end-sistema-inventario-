@@ -29,7 +29,7 @@ export class AuthService {
  register(data: any): Observable<any> {
   return this.http.post(`${this.apiUrl}/register`, data).pipe(
    tap(() => {
-    this.router.navigate(['/clientes']);
+    this.router.navigate(['/login']);
    })
   );
  }
@@ -47,5 +47,10 @@ export class AuthService {
  getTokenType(): string {
   return localStorage.getItem('tokenType') || 'Bearer';
  }
+
+ isAuthenticated(): boolean {
+    return !!this.getAccessToken();
+  }
+
  LoginComponent(){}
 }

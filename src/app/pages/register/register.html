@@ -44,7 +44,7 @@
 
         <div class="form-group">
           <label for="apellidoP">Apellido Paterno</label>
-          <input id="apellidoP" type="text" name="apellidoPaterno" class="form-control" [(ngModel)]="persona.apellidoPaterno" placeholder="Apellido Paterno" required #apellidoPInput="ngModel">
+          <input id="apellidoP" type="text" name="apellido_paterno" class="form-control" [(ngModel)]="persona.apellido_paterno" placeholder="Apellido Paterno" required #apellidoPInput="ngModel">
           <div class="error" *ngIf="apellidoPInput.invalid && apellidoPInput.touched">El apellido paterno es requerido</div>
         </div>
       </div>
@@ -52,7 +52,7 @@
       <div class="form-row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.875rem; margin-top:0.75rem;">
         <div class="form-group">
           <label for="apellidoM">Apellido Materno</label>
-          <input id="apellidoM" type="text" name="apellidoMaterno" class="form-control" [(ngModel)]="persona.apellidoMaterno" placeholder="Apellido Materno" required #apellidoMInput="ngModel">
+          <input id="apellidoM" type="text" name="apellido_materno" class="form-control" [(ngModel)]="persona.apellido_materno" placeholder="Apellido Materno" required #apellidoMInput="ngModel">
           <div class="error" *ngIf="apellidoMInput.invalid && apellidoMInput.touched">El apellido materno es requerido</div>
         </div>
 

@@ -1,110 +1,154 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { FormBuilder, ReactiveFormsModule, Validators, FormGroup } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { ClienteService } from '@services/cliente.service';
+import { Cliente, TipoCliente } from '@interfaces/cliente';
 
 @Component({
   selector: 'app-clientes',
   standalone: true,
-  imports: [CommonModule, HttpClientModule, RouterModule, FormsModule],
-  templateUrl: './clientes.html',
-  styleUrls: ['./clientes.css']
+  imports: [CommonModule, ReactiveFormsModule, RouterModule, FormsModule],
+  templateUrl: './clientes.html'
 })
 export class ClientesComponent implements OnInit {
-  clientes: any[] = [];
+  private fb = inject(FormBuilder);
+  private clienteService = inject(ClienteService);
 
-  filtroTexto = '';
-  filtroTipo = '';
+  clientes: Cliente[] = [];
+  form!: FormGroup;
+  cliente?: Cliente;
+  tiposCliente = Object.values(TipoCliente);
 
-  clientesFiltrados: any[] = [];
+  mostrarFormulario = false;
+  loading = false;
 
-  // nuevo: estado para mostrar el formulario de creación
-  showCreateForm = false;
+  ngOnInit(): void {
+    this.initForm();
+    this.loadAll();
+  }
 
-  constructor(private http: HttpClient, private route: ActivatedRoute, private router: Router) {}
+  // Inicializa el formulario
+  initForm(cliente?: Cliente) {
+    this.form = this.fb.group({
+      persona: this.fb.group({
+        nombre: [cliente?.persona?.nombre || '', [Validators.required]],
+        apellido_paterno: [cliente?.persona?.apellido_paterno || '', [Validators.required]],
+        apellido_materno: [cliente?.persona?.apellido_materno || '', [Validators.required]],
+        correo: [cliente?.persona.correo || '', [Validators.required, Validators.email]],
+        telefono: [cliente?.persona.telefono || '', [Validators.required]]
+      }),
+      tipo_cliente: [cliente?.tipo_cliente || TipoCliente.PERSONA_NATURAL, [Validators.required]],
+      documento_identidad: [cliente?.documento_identidad || ''],
+      razon_social: [cliente?.razon_social || ''],
+      ruc_empresa: [cliente?.ruc_empresa || '']
+    });
 
-  ngOnInit() {
-    this.http.get<any[]>('http://localhost:8080/api/clientes')
-      .subscribe(res => {
-        this.clientes = res;
-        this.clientesFiltrados = [...this.clientes]; // copia inicial
-      });
+    this.toggleFields(this.form.get('tipo_cliente')?.value as TipoCliente);
 
-    // Revisar queryParams para abrir modal si se pasó ?new=true
-    this.route.queryParams.subscribe(params => {
-      if (params['new']) {
-        this.openCreateModal();
+    this.form.get('tipo_cliente')?.valueChanges.subscribe(tipo =>
+      this.toggleFields(tipo as TipoCliente)
+    );
+  }
+
+  // Carga todos los clientes 
+  loadAll() {
+    this.clienteService.list().subscribe(clientes => (
+      console.log(clientes),
+      this.clientes = clientes));
+  }
+
+  // Obtiene la cantidad de clientes por tipo
+  getClientesPorTipo(tipo: string): number {
+    return this.clientes.filter(cliente => cliente.tipo_cliente === tipo).length;
+  }
+
+  // Abre formulario para crear o editar
+  abrirFormulario(cliente?: Cliente) {
+    console.log('Cliente a editar:', cliente);
+    this.cliente = cliente;
+    this.initForm(cliente);
+    this.mostrarFormulario = true;
+  }
+
+  // Cierra el modal del formulario
+  cerrarFormulario() {
+    this.mostrarFormulario = false;
+    this.cliente = undefined;
+    this.form.reset();
+  }
+
+  // Habilita o deshabilita campos según tipo de cliente 
+  toggleFields(tipo: TipoCliente) {
+    const razon = this.form.get('razon_social');
+    const ruc = this.form.get('ruc_empresa');
+    const doc = this.form.get('documento_identidad');
+
+    if (tipo === TipoCliente.EMPRESA) {
+      razon?.enable();
+      ruc?.enable();
+      doc?.enable();
+      razon?.setValidators([Validators.required]);
+      ruc?.setValidators([Validators.required]);
+      doc?.setValidators([Validators.required]);
+    } else {
+      razon?.disable();
+      ruc?.disable();
+      razon?.clearValidators();
+      ruc?.clearValidators();
+      doc?.setValidators([Validators.required]);
+    }
+
+    razon?.updateValueAndValidity();
+    ruc?.updateValueAndValidity();
+    doc?.updateValueAndValidity();
+  }
+
+  // Guarda (crear o actualizar) 
+  save() {
+    if (this.form.invalid) return;
+
+    this.loading = true;
+    const tipo = this.form.get('tipo_cliente')?.value as TipoCliente;
+    const rawData = this.form.value;
+
+    // Eliminar los campos vacíos según el tipo de cliente
+    const clienteForm: any = {
+      persona: rawData.persona,
+      tipo_cliente: tipo
+    };
+
+    if (tipo === TipoCliente.EMPRESA) {
+      clienteForm.razon_social = rawData.razon_social;
+      clienteForm.ruc_empresa = rawData.ruc_empresa;
+      clienteForm.documento_identidad = rawData.documento_identidad?.trim()
+        ? rawData.documento_identidad
+        : undefined;
+    } else {
+      clienteForm.documento_identidad = rawData.documento_identidad;
+    }
+
+    const request = this.cliente
+      ? this.clienteService.update(this.cliente.id, clienteForm)
+      : this.clienteService.create(clienteForm);
+
+    request.subscribe({
+      next: () => {
+        this.loading = false;
+        this.mostrarFormulario = false;
+        this.loadAll();
+      },
+      error: () => {
+        this.loading = false;
+        alert('Error al guardar el cliente');
       }
     });
   }
 
-  openCreateModal() {
-    this.showCreateForm = true;
-  }
-
-  closeCreateModal() {
-    this.showCreateForm = false;
-    // Limpiar el query param para evitar reabrir al navegar
-    this.router.navigate([], { queryParams: { new: null }, queryParamsHandling: 'merge' });
-  }
-
-  // nuevo cliente state
-  newCliente: any = { persona: { nombre: '', apellidoPaterno: '', apellidoMaterno: '', correo: '', telefono: '' }, tipoCliente: 'PARTICULAR' };
-  isSubmitting = false;
-
-  createCliente() {
-    // validación simple
-    if (!this.newCliente.persona.nombre || !this.newCliente.persona.apellidoPaterno) {
-      alert('Nombre y apellido paterno son requeridos');
-      return;
-    }
-
-    this.isSubmitting = true;
-    this.http.post<any>('http://localhost:8080/api/clientes', this.newCliente)
-      .subscribe({
-        next: (created) => {
-          // agregar al arreglo local y refrescar vista
-          this.clientes.unshift(created);
-          this.aplicarFiltros();
-          this.isSubmitting = false;
-          this.closeCreateModal();
-          // reset form
-          this.newCliente = { persona: { nombre: '', apellidoPaterno: '', apellidoMaterno: '', correo: '', telefono: '' }, tipoCliente: 'PARTICULAR' };
-        },
-        error: (err) => {
-          console.error('Error creando cliente', err);
-          alert('Error creando cliente');
-          this.isSubmitting = false;
-        }
-      });
-  }
-
-  // 👇 función para buscar por texto
-  onSearch(event: any) {
-    this.filtroTexto = event.target.value.toLowerCase();
-    this.aplicarFiltros();
-  }
-
-  // 👇 función para filtrar por tipo de cliente
-  filterByType(tipo: string) {
-    this.filtroTipo = tipo;
-    this.aplicarFiltros();
-  }
-
-  // 👇 lógica común de filtros
-  private aplicarFiltros() {
-    this.clientesFiltrados = this.clientes.filter(cliente => {
-      const coincideTexto =
-        cliente.persona?.nombre?.toLowerCase().includes(this.filtroTexto) ||
-        cliente.persona?.apellidoPaterno?.toLowerCase().includes(this.filtroTexto) ||
-        cliente.razonSocial?.toLowerCase().includes(this.filtroTexto);
-
-      const coincideTipo = this.filtroTipo
-        ? (cliente.tipoCliente || '').toUpperCase() === this.filtroTipo.toUpperCase()
-        : true;
-
-      return coincideTexto && coincideTipo;
-    });
+  // Eliminar cliente 
+  deleteCliente(cliente: Cliente) {
+    if (!confirm(`¿Eliminar cliente ${cliente.persona.nombre}?`)) return;
+    this.clienteService.delete(cliente.id).subscribe(() => this.loadAll());
   }
 }
