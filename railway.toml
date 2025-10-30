@@ -1,5 +1,0 @@
-[build]
-command = "npm run build"
-
-[deploy]
-startCommand = "npx http-server dist/sistema-clientes -p $PORT"
