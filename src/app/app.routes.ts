@@ -12,6 +12,7 @@ import { ProductosComponent } from './pages/inventario/productos/productos';
 import { MarcasComponent } from '@pages/inventario/marcas/marcas';
 import { MarcaFormComponent } from '@components/form/marca/marca.form';
 import { AuthGuard } from './guards/auth.guard';
+import { DashboardComponent } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
   {
@@ -19,6 +20,7 @@ export const routes: Routes = [
     component: PagesLayout,
     canActivate: [AuthGuard],
     children: [
+      { path: 'dashboard', component: DashboardComponent },
       {
         path: 'inventario', component: InventarioComponent, children: [
           { path: '', redirectTo: 'productos', pathMatch: 'full' },
@@ -36,6 +38,7 @@ export const routes: Routes = [
         ]
       },
       { path: 'clientes', component: ClientesComponent },
+      { path: 'register', component: RegisterComponent },
     ]
   },
   {
@@ -43,7 +46,6 @@ export const routes: Routes = [
     component: AuthLayout,
     children: [
       { path: 'login', component: LoginComponent },
-      { path: 'register', component: RegisterComponent },
     ]
   }
 ];

@@ -1,0 +1,179 @@
+<div class="p-8 bg-gray-50/50">
+  <div class="flex items-center justify-between mb-6">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+      <p class="mt-1 text-sm text-gray-500">Vista general del sistema</p>
+    </div>
+    <div class="flex items-center space-x-2">
+      <button (click)="loadMetrics()" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-all duration-200 flex items-center gap-2 shadow-sm">
+        <i class="fa-solid fa-rotate text-sm"></i>
+        <span>Actualizar</span>
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage" class="mb-4 p-4 bg-red-50 text-red-600 rounded-lg border border-red-100">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-circle-exclamation"></i>
+      <span>{{ errorMessage }}</span>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="mb-4 p-4 bg-white text-gray-500 rounded-lg border border-gray-100 shadow-sm">
+    <div class="flex items-center gap-2">
+      <i class="fa-solid fa-circle-notch fa-spin"></i>
+      <span>Cargando métricas...</span>
+    </div>
+  </div>
+
+  <div *ngIf="!loading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <a routerLink="/clientes" class="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-gray-500">Total Clientes</div>
+          <div class="text-3xl font-bold text-gray-900">{{ clientesCount }}</div>
+          <div class="text-xs text-gray-400 flex items-center gap-1 group-hover:text-indigo-600">
+            <span>Ver detalles</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </div>
+        </div>
+        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+          <i class="fa-solid fa-users text-2xl"></i>
+        </div>
+      </div>
+    </a>
+
+    <a routerLink="/inventario/productos" class="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-gray-500">Total Productos</div>
+          <div class="text-3xl font-bold text-gray-900">{{ productosCount }}</div>
+          <div class="text-xs text-gray-400 flex items-center gap-1 group-hover:text-indigo-600">
+            <span>Ver detalles</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </div>
+        </div>
+        <div class="bg-indigo-50 text-indigo-600 p-4 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+          <i class="fa-solid fa-box text-2xl"></i>
+        </div>
+      </div>
+    </a>
+
+    <a routerLink="/inventario/movimientos" class="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-gray-500">Total Movimientos</div>
+          <div class="text-3xl font-bold text-gray-900">{{ movimientosCount }}</div>
+          <div class="text-xs text-gray-400 flex items-center gap-1 group-hover:text-indigo-600">
+            <span>Ver detalles</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </div>
+        </div>
+        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+          <i class="fa-solid fa-exchange-alt text-2xl"></i>
+        </div>
+      </div>
+    </a>
+
+    <a routerLink="/inventario/marcas" class="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-gray-500">Total Marcas</div>
+          <div class="text-3xl font-bold text-gray-900">{{ marcasCount }}</div>
+          <div class="text-xs text-gray-400 flex items-center gap-1 group-hover:text-indigo-600">
+            <span>Ver detalles</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </div>
+        </div>
+        <div class="bg-indigo-50 text-indigo-600 p-4 rounded-lg group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+          <i class="fa-solid fa-tag text-2xl"></i>
+        </div>
+      </div>
+    </a>
+
+    <a routerLink="/inventario/categorias" class="group block bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-all duration-200 border border-gray-100">
+      <div class="flex items-center justify-between">
+        <div class="space-y-2">
+          <div class="text-sm font-medium text-gray-500">Total Categorías</div>
+          <div class="text-3xl font-bold text-gray-900">{{ categoriasCount }}</div>
+          <div class="text-xs text-gray-400 flex items-center gap-1 group-hover:text-indigo-600">
+            <span>Ver detalles</span>
+            <i class="fa-solid fa-arrow-right text-[10px]"></i>
+          </div>
+        </div>
+        <div class="bg-emerald-50 text-emerald-600 p-4 rounded-lg group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+          <i class="fa-solid fa-list text-2xl"></i>
+        </div>
+      </div>
+    </a>
+
+  </div>
+
+  <!-- Sparkline -->
+  <div class="bg-white shadow-sm rounded-xl p-6 mb-8 border border-gray-100">
+    <div class="flex items-center justify-between mb-4">
+      <div class="space-y-1">
+        <div class="text-base font-semibold text-gray-900">Movimientos últimos 7 días</div>
+        <div class="text-sm text-gray-500">Resumen de actividad reciente</div>
+      </div>
+      <div class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-lg text-sm font-medium">
+        <i class="fa-solid fa-chart-line mr-1"></i>
+        Tendencia
+      </div>
+    </div>
+    <div class="flex items-center gap-6">
+      <svg [attr.width]="180" [attr.height]="40" class="bg-transparent">
+        <polyline [attr.points]="sparklinePath" fill="none" stroke="#4f46e5" stroke-width="2.5"></polyline>
+      </svg>
+      <div class="flex items-center gap-2 text-gray-900">
+        <i class="fa-solid fa-calendar-week text-emerald-600"></i>
+        <span class="text-sm font-medium">Total: {{ recentMovimientos.length || 0 }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Últimos movimientos -->
+  <div class="bg-white shadow-sm rounded-xl p-6 border border-gray-100">
+    <div class="flex items-center justify-between mb-6">
+      <div class="space-y-1">
+        <div class="text-lg font-semibold text-gray-900">Últimos movimientos</div>
+        <div class="text-sm text-gray-500">Mostrando {{ recentMovimientos.length }} registros recientes</div>
+      </div>
+      <a routerLink="/inventario/movimientos" class="text-indigo-600 hover:text-indigo-700 transition-colors flex items-center gap-1 text-sm font-medium">
+        <span>Ver todos</span>
+        <i class="fa-solid fa-arrow-right text-[12px]"></i>
+      </a>
+    </div>
+
+    <div *ngIf="recentMovimientos.length === 0" class="text-gray-500 flex items-center justify-center p-8 bg-gray-50/50 rounded-lg border border-gray-100">
+      <div class="text-center">
+        <i class="fa-solid fa-inbox text-gray-400 text-2xl mb-2"></i>
+        <div>No hay movimientos recientes</div>
+      </div>
+    </div>
+
+    <div *ngIf="recentMovimientos.length > 0" class="overflow-x-auto">
+      <table class="w-full text-left">
+        <thead>
+          <tr class="text-sm text-gray-500 border-b">
+            <th class="py-2">Fecha</th>
+            <th class="py-2">Producto</th>
+            <th class="py-2">Tipo</th>
+            <th class="py-2">Cantidad</th>
+            <th class="py-2">Usuario</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let m of recentMovimientos" class="text-sm border-b hover:bg-gray-50">
+            <td class="py-2">{{ m.fecha | date: 'short' }}</td>
+            <td class="py-2">{{ m.producto?.nombre || m.producto?.descripcion || ('ID ' + m.producto?.id) }}</td>
+            <td class="py-2">{{ m.tipo_movimiento }}</td>
+            <td class="py-2">{{ m.cantidad }}</td>
+            <td class="py-2">{{ m.usuario?.nombre || m.usuario?.username || m.usuario_id }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>

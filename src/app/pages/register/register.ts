@@ -67,9 +67,16 @@ export class RegisterComponent {
   }
 
   getPasswordStrengthColor(): string {
-    if (this.passwordStrength >= 70) return 'green';
-    if (this.passwordStrength >= 40) return 'orange';
-    return 'red';
+    if (this.passwordStrength >= 70) return '#10b981'; // emerald-600
+    if (this.passwordStrength >= 40) return '#f59e0b'; // amber-500
+    return '#dc2626'; // red-600
+  }
+
+  getPasswordStrengthText(): string {
+    if (this.passwordStrength >= 70) return 'Contraseña fuerte';
+    if (this.passwordStrength >= 40) return 'Contraseña moderada';
+    if (this.passwordStrength > 0) return 'Contraseña débil';
+    return 'Ingresa una contraseña';
   }
 
   togglePasswordVisibility() {
